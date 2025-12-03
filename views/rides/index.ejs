@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride Sharing - Car Rental</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 1.5rem;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    h2 {
+      margin-bottom: 2rem;
+      color: #2c3e50;
+    }
+    .header-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      padding: 0.8rem 1.5rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    .btn:hover {
+      background: #5568d3;
+    }
+    .rides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 2rem;
+    }
+    .ride-card {
+      background: white;
+      border-radius: 10px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .ride-card:hover {
+      transform: translateY(-5px);
+    }
+    .ride-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+    .ride-route {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    .ride-price {
+      font-size: 1.3rem;
+      color: #667eea;
+      font-weight: bold;
+    }
+    .ride-details {
+      margin: 1rem 0;
+      color: #666;
+    }
+    .ride-detail-item {
+      margin: 0.5rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ride-owner {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+      color: #666;
+    }
+    .btn-small {
+      padding: 0.5rem 1rem;
+      background: #667eea;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      background: white;
+      border-radius: 10px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>🚗 Car Rental</h1>
+    <div>
+      <a href="/">Home</a>
+      <a href="/cars">Browse Cars</a>
+      <a href="/rides">Ride Sharing</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="header-actions">
+      <h2>Available Rides</h2>
+      <a href="/rides/new" class="btn">List a Ride</a>
+    </div>
+
+    <% if (rides.length === 0) { %>
+      <div class="empty-state">
+        <h3>No rides available</h3>
+        <p>Be the first to list a ride!</p>
+        <a href="/rides/new" class="btn" style="margin-top: 1rem;">List a Ride</a>
+      </div>
+    <% } else { %>
+      <div class="rides-grid">
+        <% rides.forEach(ride => { %>
+          <div class="ride-card">
+            <div class="ride-header">
+              <div class="ride-route">
+                <%= ride.startLocation %> → <%= ride.endLocation %>
+              </div>
+              <div class="ride-price">$<%= ride.pricePerSeat %></div>
+            </div>
+            
+            <div class="ride-details">
+              <div class="ride-detail-item">
+                📅 <%= new Date(ride.date).toLocaleDateString() %>
+              </div>
+              <div class="ride-detail-item">
+                🕐 <%= ride.time %>
+              </div>
+              <div class="ride-detail-item">
+                💺 <%= ride.availableSeats %> seats available
+              </div>
+              <% if (ride.car) { %>
+                <div class="ride-detail-item">
+                  🚗 <%= ride.car.brand %> <%= ride.car.model %>
+                </div>
+              <% } %>
+            </div>
+
+            <% if (ride.description) { %>
+              <p style="color: #666; margin: 1rem 0;"><%= ride.description %></p>
+            <% } %>
+
+            <div class="ride-owner">
+              <strong>Driver:</strong> <%= ride.owner.name %>
+            </div>
+
+            <div style="margin-top: 1rem;">
+              <form action="/rides/<%= ride._id %>/request" method="POST" style="display: inline;">
+                <button type="submit" class="btn-small">Request Ride</button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } %>
+  </div>
+</body>
+</html>

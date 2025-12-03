@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Ride Requests - Car Rental</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 1.5rem;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .ride-info {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      margin-bottom: 2rem;
+    }
+    h2 {
+      margin-bottom: 1rem;
+      color: #2c3e50;
+    }
+    .ride-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .detail-item {
+      color: #666;
+    }
+    .requests-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .request-card {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .request-info {
+      flex: 1;
+    }
+    .request-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .btn {
+      padding: 0.6rem 1.2rem;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-approve {
+      background: #28a745;
+    }
+    .btn-approve:hover {
+      background: #218838;
+    }
+    .btn-reject {
+      background: #dc3545;
+    }
+    .btn-reject:hover {
+      background: #c82333;
+    }
+    .status {
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>🚗 Car Rental</h1>
+    <div>
+      <a href="/">Home</a>
+      <a href="/cars">Browse Cars</a>
+      <a href="/rides">Ride Sharing</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="ride-info">
+      <h2>Ride Details</h2>
+      <div class="ride-details">
+        <div class="detail-item">
+          <strong>Route:</strong><br>
+          <%= ride.startLocation %> → <%= ride.endLocation %>
+        </div>
+        <div class="detail-item">
+          <strong>Date:</strong><br>
+          <%= new Date(ride.date).toLocaleDateString() %>
+        </div>
+        <div class="detail-item">
+          <strong>Time:</strong><br>
+          <%= ride.time %>
+        </div>
+        <div class="detail-item">
+          <strong>Available Seats:</strong><br>
+          <%= ride.availableSeats %>
+        </div>
+        <div class="detail-item">
+          <strong>Price Per Seat:</strong><br>
+          $<%= ride.pricePerSeat %>
+        </div>
+      </div>
+    </div>
+
+    <div class="requests-container">
+      <h2>Ride Requests (<%= ride.requests.length %>)</h2>
+      
+      <% if (ride.requests.length === 0) { %>
+        <div class="empty-state">
+          <p>No requests yet</p>
+        </div>
+      <% } else { %>
+        <% ride.requests.forEach(request => { %>
+          <div class="request-card">
+            <div class="request-info">
+              <strong><%= request.user.name %></strong>
+              <div style="margin-top: 0.5rem;">
+                <span class="status status-<%= request.status %>">
+                  <%= request.status %>
+                </span>
+              </div>
+            </div>
+            <% if (request.status === 'pending') { %>
+              <div class="request-actions">
+                <form action="/rides/<%= ride._id %>/approve/<%= request._id %>" method="POST" style="display: inline;">
+                  <button type="submit" class="btn btn-approve">Approve</button>
+                </form>
+                <form action="/rides/<%= ride._id %>/reject/<%= request._id %>" method="POST" style="display: inline;">
+                  <button type="submit" class="btn btn-reject">Reject</button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+        <% }); %>
+      <% } %>
+      
+      <div style="margin-top: 2rem;">
+        <a href="/rides" class="btn" style="background: #667eea;">Back to Rides</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

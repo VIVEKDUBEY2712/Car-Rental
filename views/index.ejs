@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Rental - Home</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 1.5rem;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      transition: color 0.3s;
+    }
+    .navbar a:hover {
+      color: #3498db;
+    }
+    .hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .hero h2 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      margin-bottom: 2rem;
+    }
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover {
+      background: #2980b9;
+    }
+    .btn-secondary {
+      background: #2ecc71;
+    }
+    .btn-secondary:hover {
+      background: #27ae60;
+    }
+    .features {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features h3 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 3rem;
+      color: #2c3e50;
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+    }
+    .feature-card h4 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      color: #667eea;
+    }
+    footer {
+      background: #2c3e50;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>🚗 Car Rental</h1>
+    <div>
+      <a href="/">Home</a>
+      <a href="/cars">Browse Cars</a>
+      <% if (user) { %>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/auth/logout">Logout</a>
+      <% } else { %>
+        <a href="/auth/login">Login</a>
+        <a href="/auth/signup">Sign Up</a>
+      <% } %>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h2>Find Your Perfect Ride</h2>
+    <p>Rent cars by the hour or by the day at affordable prices</p>
+    <div>
+      <a href="/cars" class="btn">Browse Cars</a>
+      <% if (!user) { %>
+        <a href="/auth/signup" class="btn btn-secondary">Get Started</a>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="features">
+    <h3>Why Choose Us?</h3>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>🚘 Wide Selection</h4>
+        <p>Choose from a variety of cars to suit your needs and budget</p>
+      </div>
+      <div class="feature-card">
+        <h4>💰 Affordable Prices</h4>
+        <p>Competitive rates for hourly and daily rentals</p>
+      </div>
+      <div class="feature-card">
+        <h4>⏰ Flexible Booking</h4>
+        <p>Book by the hour or by the day - whatever works for you</p>
+      </div>
+      <div class="feature-card">
+        <h4>⭐ Quality Service</h4>
+        <p>Well-maintained vehicles and excellent customer support</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 Car Rental. All rights reserved.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings - Car Rental</title>
+  <style>
+    /* Reset & Base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Navbar */
+    .navbar {
+      background: #2c3e50;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+    .navbar a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 1.5rem;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    .navbar a:hover {
+      color: #4facfe;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    h2 {
+      margin-bottom: 1.5rem;
+      color: #2c3e50;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Bookings Box */
+    .bookings-container {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+    }
+    th {
+      background: #f1f3f6;
+      font-weight: 600;
+      color: #2c3e50;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+    }
+    td {
+      font-size: 0.95rem;
+    }
+
+    /* Status Badges */
+    .status {
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-confirmed {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-cancelled {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.6rem 1.2rem;
+      background: #4facfe;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      display: inline-block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn:hover {
+      background: #3b82f6;
+      transform: translateY(-2px);
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+    .empty-state h3 {
+      margin-bottom: 0.8rem;
+      font-size: 1.4rem;
+      color: #2c3e50;
+    }
+    .empty-state p {
+      margin-bottom: 1rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .navbar div {
+        margin-top: 0.8rem;
+      }
+      table {
+        font-size: 0.85rem;
+      }
+      th, td {
+        padding: 0.7rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <h1>Car Rental</h1>
+    <div>
+      <a href="/">Home</a>
+      <a href="/cars">Browse Cars</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+ 
+  <div class="container">
+    <h2>My Bookings</h2>
+    <div class="bookings-container">
+      <% if (bookings.length === 0) { %>
+        <div class="empty-state">
+          <h3>No bookings yet</h3>
+          <p>Start by browsing our available cars</p>
+          <a href="/cars" class="btn">Browse Cars</a>
+        </div>
+      <% } else { %>
+        <table>
+          <thead>
+            <tr>
+              <th>Car</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Total Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% bookings.forEach(booking => { %>
+              <tr>
+                <td><%= booking.car.brand %> <%= booking.car.model %></td>
+                <td><%= new Date(booking.startDate).toLocaleDateString() %></td>
+                <td><%= new Date(booking.endDate).toLocaleDateString() %></td>
+                <td>$<%= booking.totalAmount.toFixed(2) %></td>
+                <td>
+                  <span class="status status-<%= booking.status %>">
+                    <%= booking.status %>
+                  </span>
+                </td>
+                <td>
+                  <% if (booking.status === 'pending') { %>
+                    <form action="/bookings/<%= booking._id %>/confirm" method="POST" style="display:inline;">
+                      <button type="submit" class="btn">Confirm</button>
+                    </form>
+                  <% } %>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>

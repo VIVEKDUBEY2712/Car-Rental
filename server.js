@@ -1,76 +1,55 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const path = require("path");
-const bodyParser = require("body-parser");
-const User = require("./models/user");
+const express = require('express');
+const session = require('express-session');
+const flash = require('connect-flash');
+const methodOverride = require('method-override');
+const connectDB = require('./config/database');
 
 const app = express();
-const PORT = 3000;
 
-// =============================
-// MongoDB connection
-// =============================
-mongoose.connect("mongodb://127.0.0.1:27017/car_rental", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// Connect to MongoDB
 
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
-db.once("open", () => {
-  console.log("✅ Connected to MongoDB");
-});
+connectDB();
 
-// =============================
 // Middleware
-// =============================
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(methodOverride('_method'));
+app.use(session({
+  secret: 'secretkey',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(flash());
 
-// Static files (public folder serve karega)
-app.use(express.static(path.join(__dirname, "public")));
+// Set EJS
+app.set('view engine', 'ejs');
+app.set('views', './views');
 
-// =============================
+// Static files
+app.use(express.static('public'));
+
 // Routes
-// =============================
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
+app.use('/auth', require('./routes/auth'));
+app.use('/cars', require('./routes/cars'));
+app.use('/bookings', require('./routes/bookings'));
+app.use('/reviews', require('./routes/reviews'));
+app.use('/rides', require('./routes/rides'));
+app.use('/dashboard', require('./routes/dashboard'));
+
+// Home route
+app.get('/', (req, res) => {
+  res.render('index', { user: req.session.userId, role: req.session.role });
 });
 
-// --- Sign In Route ---
-app.post("/signin", async (req, res) => {
-  const { firstName, lastName, email, contact } = req.body;
-
-  try {
-    const newUser = new User({ firstName, lastName, email, contact });
-    await newUser.save();
-    res.json({ success: true, message: "Form submitted successfully!" });
-  } catch (error) {
-    console.error("Error saving user:", error);
-    res.json({
-      success: false,
-      message:
-        error.code === 11000 ? "Email already exists." : "Submission failed.",
-    });
+// Middleware to check authentication
+app.use((req, res, next) => {
+  if (!req.session.userId && req.path !== '/auth/login' && req.path !== '/auth/signup' && req.path !== '/') {
+    return res.redirect('/auth/login');
   }
+  next();
 });
 
-// --- Search Route ---
-app.post("/search", async (req, res) => {
-  const { location, startDate, endDate } = req.body;
-
-  // Sample response (aap baad me DB se data fetch kar sakte ho)
-  const availableCars = [
-    { name: "Sedan Classic", price: "₹1100 / day" },
-    { name: "SUV Comfort", price: "₹2000 / day" },
-  ];
-
-  res.json({ success: true, cars: availableCars });
-});
-
-// =============================
-// Start server
-// =============================
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

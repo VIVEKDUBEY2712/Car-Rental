@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book <%= car.brand %> <%= car.model %> - Car Rental</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f5f5;
+    }
+    .navbar {
+      background: #2c3e50;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .navbar h1 {
+      font-size: 1.5rem;
+    }
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-left: 1.5rem;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .booking-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      margin-bottom: 2rem;
+      color: #2c3e50;
+    }
+    .car-info {
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 5px;
+      margin-bottom: 2rem;
+    }
+    .car-info h3 {
+      color: #2c3e50;
+      margin-bottom: 0.5rem;
+    }
+    .price-info {
+      display: flex;
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+    .price-item {
+      font-size: 1.1rem;
+      color: #667eea;
+      font-weight: bold;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #555;
+      font-weight: 500;
+    }
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid #ddd;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    .btn {
+      padding: 1rem 2rem;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .btn:hover {
+      background: #5568d3;
+    }
+    .btn-secondary {
+      background: #6c757d;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: 1rem;
+    }
+    #totalAmount {
+      font-size: 1.5rem;
+      color: #667eea;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+  </style>
+  <script>
+    function calculateTotal() {
+      const startDate = new Date(document.getElementById('startDate').value);
+      const endDate = new Date(document.getElementById('endDate').value);
+      const pricePerDay = <%= car.pricePerDay %>;
+      
+      if (startDate && endDate && endDate > startDate) {
+        const days = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const total = days * pricePerDay;
+        document.getElementById('totalAmount').textContent = `Total: ₹₹{total.toFixed(2)} (₹{days} days)`;
+      } else {
+        document.getElementById('totalAmount').textContent = 'Total:₹0.00';
+      }
+    }
+  </script>
+</head>
+<body>
+  <nav class="navbar">
+    <h1>🚗 Car Rental</h1>
+    <div>
+      <a href="/">Home</a>
+      <a href="/cars">Browse Cars</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/auth/logout">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="booking-form">
+      <h2>Book Your Car</h2>
+      
+      <div class="car-info">
+         <h3><%= car.brand %> <%= car.model %></h3>
+        <p>📍 <%= car.location %></p>
+        <div class="price-info">
+          <div class="price-item">₹<%= car.pricePerDay %>/day</div>
+          <div class="price-item">₹<%= car.pricePerHour %>/hour</div>
+        </div>
+      </div> 
+
+      <form action="/bookings/<%= car._id %>/book" method="POST">
+        <div class="form-group">
+          <label for="startDate">Start Date</label>
+          <input type="date" id="startDate" name="startDate" required onchange="calculateTotal()" min="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+
+        <div class="form-group">
+          <label for="endDate">End Date</label>
+          <input type="date" id="endDate" name="endDate" required onchange="calculateTotal()" min="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+
+        <div id="totalAmount">Total: ₹0.00</div>
+
+        <div style="margin-top: 2rem;">
+          <button type="submit" class="btn">Confirm Booking</button>
+          <a href="/cars/<%= car._id %>" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
